@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="NAVIGATION">
+	<cacheModel type="MEMORY" id="navCache">
+		<flushInterval hours="9999"/>
+	</cacheModel>
+
+	<typeAlias alias="Navigation" type="com.enmotech.nildba.domain.Navigation" />
+
+	<resultMap id="NavigationResult" class="Navigation">
+		<result column="ID" property="id" jdbcType="DECIMAL" />
+		<result column="NAME" property="name" jdbcType="VARCHAR" />
+		<result column="PARENT_ID" property="parentId" jdbcType="DECIMAL" />
+		<result column="ICONFILE" property="iconFile" jdbcType="VARCHAR" />
+		<result column="ACTION" property="action" jdbcType="VARCHAR" />
+		<result column="CHILD_INDEX" property="childIndex" jdbcType="DECIMAL" />
+		<result column="STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="REMARK" property="remark" jdbcType="VARCHAR" />
+		<result column="TARGET" property="target" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="getNavigationList" resultMap="NavigationResult" cacheModel="navCache">
+		select p.ID, p.NAME, p.PARENT_ID, p.ICONFILE, p.ACTION, p.CHILD_INDEX, 
+			   p.STATUS, p.REMARK, p.TARGET
+		from PUB_MENUS p
+	</select>
+
+</sqlMap>
+

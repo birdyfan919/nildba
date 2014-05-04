@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	<!-- 加载数据库配置基本信息文件 -->
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:/META-INF/database.properties" />
+	</bean>
+
+	<!--数据源对象 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver_class}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+	<!--iBatis的sql配置文件的加载 -->
+	<bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+		<property name="configLocation" value="classpath:/META-INF/sql-map-config.xml" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!--事务管理 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+ 	
+	<!-- 事务代理 -->
+	<bean id="baseTransactionProxy"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean" 
+		abstract="true">
+		<property name="transactionManager" ref="transactionManager" />
+		<property name="transactionAttributes">
+			<props>
+				<prop key="find*">PROPAGATION_REQUIRED, readOnly</prop>
+				<prop key="get*">PROPAGATION_REQUIRED, readOnly</prop>
+				<prop key="query*">PROPAGATION_REQUIRED, readOnly</prop>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="baseDAO" abstract="true">
+		<property name="sqlMapClient" ref="sqlMapClient" />
+	</bean>
+	
+	<import resource="classpath:/META-INF/businessContext.xml"/>	
+</beans>

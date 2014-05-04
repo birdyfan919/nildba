@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="PAGINATION">
+
+	<sql id="pagination_start">
+		select * from ( select pagination_name_alias.*, ROWNUM RN from (
+	</sql>
+	
+	<sql id="pagination_end">
+		) pagination_name_alias) where RN between ((#currentPageNum:DECIMAL#-1)*#pageSize:DECIMAL#+1) and (#currentPageNum:DECIMAL#*#pageSize:DECIMAL#)
+	</sql>
+	
+</sqlMap>
+
